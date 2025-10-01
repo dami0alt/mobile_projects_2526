@@ -1,0 +1,37 @@
+
+# 📘 Configuración de Entornos Flutter/Dart
+
+Este repositorio documenta las actividades básicas para preparar el entorno de desarrollo móvil con Flutter y Dart.
+
+---
+
+## 🔧 Instalación de herramientas
+
+- Instalar **Android Studio** y configurar el emulador Android.
+- Instalar **Visual Studio Code**.
+- Añadir extensiones de **Flutter** y **Dart** en ambos IDEs.
+- Verificar instalación con `flutter doctor`.
+
+---
+
+## 📱 Prueba de aplicaciones
+
+- Ejecutar una **App de ejemplo** en Android Studio.
+- Ejecutar una **App de ejemplo** en Visual Studio Code.
+- Realizar **modificaciones simples** en cada App.
+- Comprobar funcionamiento en **emulador** y **dispositivo físico**.
+
+---
+
+## 🌐 GitHub
+
+- Crear una **cuenta personal** en GitHub.
+- Subir cada App del curso con su documentación correspondiente.
+
+---
+
+## 📝 Documentación requerida
+
+- Explicar los **pasos realizados** en cada actividad.
+- Incluir **capturas de pantalla**.
+- Adjuntar **vídeos demostrativos** del funcionamiento de las Apps.
