@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,92 +48,52 @@ class MyHomePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //-------------------------------------------------
-                    FormLabelGroup(
-                      title: 'Please provide the speed of vehicle?',
-                      subtitle: 'please select one option given below',
-                    ),
-                    FormBuilderRadioGroup(
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                      name: "speed",
-                      orientation: OptionsOrientation.vertical,
-                      // separator: const Padding(padding: EdgeInsets.all(20)),
-                      options: const [
-                        FormBuilderFieldOption(value: 'abvoe 40km/h'),
-                        FormBuilderFieldOption(value: 'below 40km/h'),
-                        FormBuilderFieldOption(value: '0km/h'),
-                      ],
-                      onChanged: (String? value) {
-                        debugPrint(value);
-                      },
-                    ),
-                    //-------------------------------------------------
-                    FormLabelGroup(title: 'Enter remarks'),
+                    FormLabelGroup(title: 'Autocompleter'),
                     FormBuilderTextField(
-                      name: 'remark',
-                      decoration: InputDecoration(
-                        hintText: 'Enter your remarks',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
-                        filled: true,
-                      ),
-                      onChanged: (String? value) {
-                        debugPrint(value);
-                      },
-                    ),
-                    //-------------------------------------------------
-                    FormLabelGroup(
-                      title: 'Please provide the high speed of vehicle?',
-                      subtitle: 'please select one option given below',
-                    ),
-                    FormBuilderDropdown(
-                      name: 'highspeed',
-                      decoration: InputDecoration(
-                        hintText: 'Select option',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'high', child: Text('High')),
-                        DropdownMenuItem(
-                          value: 'medium',
-                          child: Text('Medium'),
-                        ),
-                        DropdownMenuItem(value: 'low', child: Text('Low')),
-                      ],
-                      onChanged: (String? value) {
-                        debugPrint(value);
-                      },
-                    ),
-                    //-------------------------------------------------
-                    FormLabelGroup(
-                      title: 'Please provide the speed of vehicle past 1 hour?',
-                      subtitle: 'please select one or more options given below',
-                    ),
-                    FormBuilderCheckboxGroup(
+                      name: 'Autocomplete',
                       decoration: const InputDecoration(
-                        border: InputBorder.none,
+                        labelText: 'Autocomplete',
+                        hintText: 'Text',
+                        border: OutlineInputBorder(),
                       ),
-                      name: "selectSpeed",
-                      orientation: OptionsOrientation.vertical,
-                      // separator: const Padding(padding: EdgeInsets.all(20)),
-                      options: const [
-                        FormBuilderFieldOption(value: '20km/h'),
-                        FormBuilderFieldOption(value: '30km/h'),
-                        FormBuilderFieldOption(value: '40km/h'),
-                        FormBuilderFieldOption(value: '50km/h'),
-                      ],
-                      onChanged: (List<String>? value) {
-                        debugPrint(value.toString());
-                      },
                     ),
+                    //-------------------------------------------------
+                    FormLabelGroup(title: 'Date Picker'),
+                    FormBuilderDateTimePicker(
+                      name: 'Date',
+                      inputType: InputType.date,
+                      decoration: const InputDecoration(
+                        labelText: 'Date Picker',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    //--------------------------------------------
+                    FormLabelGroup(title: 'Date Picker'),
+                    FormBuilderDateRangePicker(
+                      name: 'Date Picker',
+                      decoration: const InputDecoration(
+                        labelText: 'Rango de fechas',
+                        hintText: 'Selecciona un rango',
+                        border: OutlineInputBorder(),
+                      ),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                      initialValue: DateTimeRange(
+                        start: DateTime.now(),
+                        end: DateTime.now().add(const Duration(days: 7)),
+                      ),
+                    ),
+                    //-------------------------------------------------
+                    FormLabelGroup(title: 'Time Picker'),
+                    FormBuilderDateTimePicker(
+                      name: 'Time',
+                      inputType: InputType.time,
+                      decoration: const InputDecoration(
+                        labelText: 'Choose a Time',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    FormLabelGroup(title: "Filter Chip"),
                   ],
                 ),
               ),
@@ -203,12 +164,12 @@ class FormTitle extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Form title',
+            'Form D',
             style: Theme.of(
               context,
             ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold),
           ),
-          Text('description', style: Theme.of(context).textTheme.labelLarge),
+          Text('--------', style: Theme.of(context).textTheme.labelLarge),
         ],
       ),
     );
