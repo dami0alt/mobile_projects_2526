@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
 void main() {
   runApp(const MyApp());
@@ -18,15 +21,65 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
-  final String title = 'Salesians Sarrià 25/26';
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final String title = 'Salesians Sarrià 25/26 - Damian Altamirano';
   final _formKey = GlobalKey<FormBuilderState>();
+  final List<String> _chipOptions = [
+    'HTML',
+    'CSS',
+    'React',
+    'Dart',
+    'TypeScript',
+    'Angular',
+  ];
+  // 1. Estado para manejar la carga y la lista de nombres
+  List<String> countries = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData(); // Inicia la carga de datos
+  }
+
+  Future<void> _loadData() async {
+    // Lee el archivo JSON
+    final String jsonString = await rootBundle.loadString(
+      'assets/countries.json',
+    );
+    final List<dynamic> jsonList = json.decode(jsonString);
+
+    // Mapea para extraer SÓLO la propiedad "country" (el nombre)
+    final List<String> loadedNames = jsonList
+        .map((json) => json['country'] as String)
+        .toList();
+
+    setState(() {
+      countries = loadedNames;
+      isLoading = false;
+    });
+  }
+
+  // 3. Función de sugerencias para el TypeAhead
+  Future<List<String>> _getCountrySuggestions(String pattern) async {
+    if (pattern.isEmpty) return countries.take(10).toList();
+
+    // Filtra la lista cargada (countries)
+    return countries
+        .where((name) => name.toLowerCase().startsWith(pattern.toLowerCase()))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +102,20 @@ class MyHomePage extends StatelessWidget {
                   children: [
                     //-------------------------------------------------
                     FormLabelGroup(title: 'Autocompleter'),
-                    FormBuilderTextField(
-                      name: 'Autocomplete',
+                    FormBuilderTypeAhead<String>(
+                      name: 'country_name',
                       decoration: const InputDecoration(
-                        labelText: 'Autocomplete',
-                        hintText: 'Text',
+                        labelText: 'autocomplete',
                         border: OutlineInputBorder(),
                       ),
+
+                      // 3. Usamos la función de sugerencias de Strings
+                      suggestionsCallback: _getCountrySuggestions,
+
+                      // 4. itemBuiler para Strings (mucho más simple)
+                      itemBuilder: (context, String suggestion) {
+                        return ListTile(title: Text(suggestion));
+                      },
                     ),
                     //-------------------------------------------------
                     FormLabelGroup(title: 'Date Picker'),
@@ -94,6 +154,22 @@ class MyHomePage extends StatelessWidget {
                       ),
                     ),
                     FormLabelGroup(title: "Filter Chip"),
+                    FormBuilderFilterChips(
+                      name: 'skills', // El nombre clave para el formulario
+                      // Las opciones que definiste arriba
+                      options: _chipOptions
+                          .map(
+                            (chip) => FormBuilderChipOption(
+                              value: chip,
+                              child: Text(chip),
+                            ),
+                          )
+                          .toList(),
+
+                      // Opcional: Wrap para que los chips fluyan a la siguiente línea
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                    ),
                   ],
                 ),
               ),
