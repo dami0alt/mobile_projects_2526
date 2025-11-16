@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -128,12 +127,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     //--------------------------------------------
-                    FormLabelGroup(title: 'Date Picker'),
+                    FormLabelGroup(title: 'Range Picker'),
                     FormBuilderDateRangePicker(
                       name: 'Date Picker',
                       decoration: const InputDecoration(
-                        labelText: 'Rango de fechas',
-                        hintText: 'Selecciona un rango',
+                        labelText: 'Date Range',
+                        hintText: 'Select a range',
                         border: OutlineInputBorder(),
                       ),
                       firstDate: DateTime(2000),
@@ -155,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     FormLabelGroup(title: "Filter Chip"),
                     FormBuilderFilterChips(
-                      name: 'skills', // El nombre clave para el formulario
+                      name: 'Skills', // El nombre clave para el formulario
                       // Las opciones que definiste arriba
                       options: _chipOptions
                           .map(
