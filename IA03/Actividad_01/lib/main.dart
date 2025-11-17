@@ -1,4 +1,3 @@
-import 'dart:ui_web';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -9,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Recuperar el valor d' 'un camp de text',
+      title: 'Retrive a value from a text field',
       home: MyCustomForm(),
     );
   }
@@ -34,7 +33,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Recuperar el valor d\'un camp de text'),
+          title: const Text('Retrive the value from a text field'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -51,7 +50,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
                 barrierDismissible: true,
                 builder: (context) {
                   return SimpleDialog(
-                      title: const Text("SimpleDialog"),
+                      title: const Text("Simple Dialog"),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0)),
                       children: [
@@ -75,7 +74,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
                   barrierDismissible: false,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text("AlertDialog"),
+                      title: const Text("Alert Dialog"),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0)),
                       content: Text(myController.text),
@@ -128,14 +127,14 @@ class _MyCustomFormState extends State<MyCustomForm> {
                               Text(myController.text),
                               ElevatedButton(
                                 onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('Tancar BottomSheet'),
+                                child: const Text('Close'),
                               )
                             ],
                           ),
                         ));
                   });
             },
-            tooltip: 'Mostra el valor!',
+            tooltip: 'Show the value!',
             child: const Icon(Icons.text_fields),
           ),
         ]));
