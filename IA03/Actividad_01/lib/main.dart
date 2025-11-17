@@ -95,10 +95,12 @@ class _MyCustomFormState extends State<MyCustomForm> {
           const SizedBox(width: 16),
           FloatingActionButton(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(myController.text),
-                duration: Duration(seconds: 2),
-              ));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(myController.text),
+                  duration: Duration(seconds: 2),
+                ),
+              );
             },
             tooltip: 'Show Snack Bar',
             child: const Icon(Icons.text_fields),
@@ -107,16 +109,29 @@ class _MyCustomFormState extends State<MyCustomForm> {
           FloatingActionButton(
             onPressed: () {
               showModalBottomSheet(
-                  backgroundColor: Colors.transparent,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.amber,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(25),
-                            topRight: Radius.circular(25),
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (BuildContext context) {
+                  return Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.amber,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25),
+                      ),
+                    ),)
+                    height: 200,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(myController.text),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Tancar BottomSheet'),
                           ),
+                        ]
                         ),
                         height: 200,
                         child: Center(
@@ -137,6 +152,8 @@ class _MyCustomFormState extends State<MyCustomForm> {
             tooltip: 'Show the value!',
             child: const Icon(Icons.text_fields),
           ),
-        ]));
+        ],
+      ),
+    );
   }
 }

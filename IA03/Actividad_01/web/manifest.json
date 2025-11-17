@@ -1,6 +1,6 @@
 {
-    "name": "new_form",
-    "short_name": "new_form",
+    "name": "actividad_01",
+    "short_name": "actividad_01",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
