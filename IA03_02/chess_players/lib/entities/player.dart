@@ -1,19 +1,26 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 class Player {
-  final String avatar; // URL de la imagen
-  final int playerId; // Identificador numérico
-  final String id; // @id del API
-  final String url; // Perfil público
-  final String name; // Nombre completo
-  final String username; // Nombre de usuario
-  final int followers; // Número de seguidores
-  final String country; // URL del país
-  final int lastOnline; // Timestamp (segundos desde epoch)
-  final int joined; // Timestamp (segundos desde epoch)
-  final String status; // Estado (basic, premium, etc.)
-  final bool isStreamer; // Si es streamer
-  final bool verified; // Si está verificado
-  final String league; // Liga actual
+  final String avatar;
+  final int playerId;
+  final String id;
+  final String url;
+  final String name;
+  final String username;
+  final int followers;
+  final String country;
+  final int lastOnline;
+  final int joined;
+  final String status;
+  final bool isStreamer;
+  final bool verified;
+  final String league;
   final List<String> streamingPlatforms;
+  //optionals properties
+  bool isFavorite;
+  String? notes;
+
   Player({
     required this.avatar,
     required this.playerId,
@@ -30,30 +37,16 @@ class Player {
     required this.verified,
     required this.league,
     required this.streamingPlatforms,
+    this.isFavorite = false,
   });
   factory Player.fromJson(Map<String, dynamic> json) {
-    // Manejo del campo 'streaming_platforms' (el más problemático)
     List<String> platforms = [];
-    final rawPlatforms = json['streaming_platforms'];
-
-    if (rawPlatforms is List) {
-      // 💡 Un junior haría un mapeo simple si se sabe que contiene URLs/Strings.
-      // Como contiene Mapas, lo simplificaremos a un listado vacío o extraeremos las URLs.
-      platforms = rawPlatforms
-          .where((item) => item is Map && item.containsKey('channel_url'))
-          .map((item) => item['channel_url'] as String)
-          .toList();
-    }
 
     return Player(
-      // 1. Manejando campos que pueden ser nulos o faltar (usando ?? '')
       avatar: json['avatar'] ?? '',
-      name: json['name'] ?? 'N/A', // Magnus no tenía nombre, usamos 'N/A'
-      // El campo '@id' se llama simplemente 'id' en tu clase
-      id: json['@id'] ?? '',
-
-      // 2. Otros campos
       playerId: json['player_id'] ?? 0,
+      name: json['name'] ?? 'N/A',
+      id: json['@id'] ?? '',
       url: json['url'] ?? '',
       username: json['username'] ?? '',
       followers: json['followers'] ?? 0,
@@ -63,20 +56,28 @@ class Player {
       status: json['status'] ?? '',
       isStreamer: json['is_streamer'] ?? false,
       verified: json['verified'] ?? false,
-
-      // El campo 'league' puede faltar
       league: json['league'] ?? '',
-
-      // 3. Usando la lista 'platforms' que hemos parseado
       streamingPlatforms: platforms,
     );
   }
 }
 
-class CustomPlayerData {
-  String? alias;
-  String? notes;
-  bool isFavorite;
+class PlayersService {
+  static Future<List<Player>> getPlayer(List<String> playersUsername) async {
+    final List<Player> list = [];
 
-  CustomPlayerData({this.alias, this.notes, this.isFavorite = false});
+    for (var username in playersUsername) {
+      final response = await http.get(
+        Uri.parse("https://api.chess.com/pub/player/$username"),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        list.add(Player.fromJson(data));
+      } else {
+        //throw Exception('HTTP Failed: ${response.statusCode}');
+      }
+    }
+    return list;
+  }
 }
