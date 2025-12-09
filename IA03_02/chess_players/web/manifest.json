@@ -1,6 +1,6 @@
 {
-    "name": "pokemon_tcgp",
-    "short_name": "pokemon_tcgp",
+    "name": "chess_players",
+    "short_name": "chess_players",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

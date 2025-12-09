@@ -6,20 +6,21 @@ class Player {
   final int playerId;
   final String id;
   final String url;
-  final String name;
-  final String username;
-  final int followers;
+  String name;
+  String username;
+  int followers;
   final String country;
   final int lastOnline;
   final int joined;
-  final String status;
+  String status;
   final bool isStreamer;
   final bool verified;
-  final String league;
+  String league;
   final List<String> streamingPlatforms;
   //optionals properties
   bool isFavorite;
   String? notes;
+  double rating;
 
   Player({
     required this.avatar,
@@ -38,12 +39,15 @@ class Player {
     required this.league,
     required this.streamingPlatforms,
     this.isFavorite = false,
+    this.rating = 2.5,
   });
   factory Player.fromJson(Map<String, dynamic> json) {
     List<String> platforms = [];
 
     return Player(
-      avatar: json['avatar'] ?? '',
+      avatar:
+          json['avatar'] ??
+          'https://static.vecteezy.com/system/resources/previews/004/511/281/original/default-avatar-photo-placeholder-profile-picture-vector.jpg',
       playerId: json['player_id'] ?? 0,
       name: json['name'] ?? 'N/A',
       id: json['@id'] ?? '',
@@ -62,7 +66,7 @@ class Player {
   }
 }
 
-class PlayersService {
+class PlayersApiService {
   static Future<List<Player>> getPlayer(List<String> playersUsername) async {
     final List<Player> list = [];
 
@@ -75,7 +79,7 @@ class PlayersService {
         final data = jsonDecode(response.body);
         list.add(Player.fromJson(data));
       } else {
-        //throw Exception('HTTP Failed: ${response.statusCode}');
+        throw Exception('HTTP Failed: ${response.statusCode}');
       }
     }
     return list;
