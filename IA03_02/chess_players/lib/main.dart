@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
+import 'package:chess_players/widgets/player_card.dart';
 import 'package:chess_players/entities/player.dart';
+import 'package:chess_players/api_services/get_players_service.dart';
 import 'package:chess_players/pages/custom_player.dart';
 import 'package:chess_players/pages/search_player.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,63 +18,46 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const Color chessGreen = Color.fromARGB(255, 120, 186, 73);
     const Color darkBackground = Color.fromARGB(255, 34, 35, 32);
-    return MaterialApp(
-      title: 'M0489 - Apps - Form (A)',
-      theme: ThemeData(
-        // 1. Usar el brillo oscuro como base
-        brightness: Brightness.dark,
-
-        // 2. Color primario/de acento (para botones, FAB, etc.)
-        primaryColor: chessGreen,
-
-        // 3. Color de fondo general de la pantalla (Scaffold)
-        scaffoldBackgroundColor: darkBackground,
-
-        // 4. Color de fondo de los Cards
-        cardColor: const Color.fromARGB(255, 45, 46, 43),
-        colorScheme:
-            ColorScheme.fromSeed(
-              seedColor: chessGreen,
-              brightness: Brightness.dark,
-              background: darkBackground,
-              surface: const Color.fromARGB(
-                255,
-                45,
-                46,
-                43,
-              ), // Superficies como Cards
-              onSurface: Colors.white,
-              primary: chessGreen,
-            ).copyWith(
-              secondary:
-                  chessGreen, // Color secundario para FloatingActionButton, etc.
-            ),
-
-        // 6. Estilo del AppBar (para que se fusione con el fondo)
-        appBarTheme: AppBarTheme(
-          backgroundColor: const Color.fromARGB(255, 26, 20, 13),
-          foregroundColor: Colors.white, // Color del texto y los iconos
-          elevation: 0, // Sin sombra para un look plano
-        ),
-
-        // 7. Estilo de botones elevados (como Sign Up)
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: chessGreen,
-            foregroundColor: Colors.black, // Texto negro sobre fondo verde
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      child: MaterialApp(
+        title: 'Chess.com Players - Salesians de Sarrià 2526 ',
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          primaryColor: chessGreen,
+          scaffoldBackgroundColor: darkBackground,
+          cardColor: const Color.fromARGB(255, 45, 46, 43),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: chessGreen,
+            brightness: Brightness.dark,
+            background: darkBackground,
+            surface: const Color.fromARGB(255, 45, 46, 43),
+            onSurface: Colors.white,
+            primary: chessGreen,
+          ).copyWith(secondary: chessGreen),
+          appBarTheme: AppBarTheme(
+            backgroundColor: const Color.fromARGB(255, 26, 20, 13),
+            foregroundColor: Colors.white,
+            elevation: 0,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: chessGreen,
+              foregroundColor: Colors.black,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
+
+          textTheme: Typography.whiteMountainView.apply(
+            bodyColor: Colors.white,
+          ),
+          useMaterial3: true,
         ),
-
-        // 8. Estilo de texto por defecto
-        textTheme: Typography.whiteMountainView.apply(bodyColor: Colors.white),
-
-        useMaterial3: true,
+        home: MyHomePage(),
       ),
-      home: MyHomePage(),
     );
   }
 }
@@ -85,17 +70,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final String title = 'Chess.com Wiki Players';
-
-  final List<String> usernamesList = [
-    'darco8987',
-    'Carnicerooii',
-    'hikaru',
-    'magnuscarlsen',
-  ];
-
+  final String title = 'Chess.com Wiki Players - Damian Altamirano O.';
+  final List<String> usernamesList = ['hikaru', 'magnuscarlsen'];
   late Future<List<Player>> playersFuture;
   List<Player> _players = [];
+
+  void _handleCardTap(Player player) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PlayerDetailScreen(player: player),
+      ),
+    );
+    setState(() {}); // Refresca la lista al volver
+  }
+
+  void _handleFavoriteToggle(Player player) {
+    setState(() {
+      player.isFavorite = !player.isFavorite;
+
+      if (player.isFavorite) {
+        player.followers += 1;
+      } else {
+        player.followers -= 1;
+      }
+    });
+  }
 
   Color _getLeagueColor(String league) {
     // Aseguramos que la comparación no distinga mayúsculas y minúsculas
@@ -131,9 +130,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<List<Player>> _loadInitialPlayers() async {
-    final players = await PlayersApiService.getPlayer(usernamesList);
+    final players = await PlayersApiService.fetchPlayers(usernamesList);
     setState(() {
-      _players = players; // Inicializa la lista local
+      _players = players;
     });
     return players;
   }
@@ -153,17 +152,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Navegar a la pantalla de búsqueda y esperar el resultado (el Player encontrado)
           final newPlayer = await Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const PlayerSearchScreen()),
           );
-
-          // Si se devuelve un Player (no nulo)
           if (newPlayer != null && newPlayer is Player) {
             setState(() {
-              _players.add(newPlayer); // Añadir el nuevo jugador a la lista
+              _players.add(newPlayer);
             });
-            // Opcional: Mostrar una confirmación
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Jugador ${newPlayer.username} añadido!')),
             );
@@ -182,8 +177,6 @@ class _MyHomePageState extends State<MyHomePage> {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
 
-          //final players = snapshot.data!;
-
           return MasonryGridView.count(
             padding: const EdgeInsets.all(12),
             crossAxisSpacing: 12,
@@ -193,106 +186,11 @@ class _MyHomePageState extends State<MyHomePage> {
             itemBuilder: (context, index) {
               final player = _players[index];
 
-              return InkWell(
-                onTap: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => PlayerDetailScreen(player: player),
-                    ),
-                  );
-                  setState(() {});
-                },
-
-                child: Card(
-                  elevation: 4,
-                  color: _getLeagueColor(player.league),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Hero(
-                          tag: 'player-avatar-${player.username}',
-                          child: CircleAvatar(
-                            radius: 60,
-                            backgroundImage: NetworkImage(player.avatar),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        RatingBar.builder(
-                          initialRating: player.rating,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          ignoreGestures: true,
-                          itemCount: 5,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) =>
-                              Icon(Icons.star, color: Colors.amber),
-                          onRatingUpdate: (rating) {
-                            print(rating);
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        // ⭐ Username dinámico (altura variable)
-                        Text(
-                          player.username,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-
-                        const SizedBox(height: 6),
-
-                        Text("🌍 ${player.country}"),
-                        Text("⭐ Status: ${player.status}"),
-                        Text("🏆 League: ${player.league}"),
-
-                        const SizedBox(height: 10),
-
-                        // Followers
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.people, size: 18),
-                            const SizedBox(width: 6),
-                            Text(
-                              player.followers.toString(),
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        IconButton(
-                          icon: Icon(
-                            player.isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: player.isFavorite ? Colors.red : Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              player.isFavorite = !player.isFavorite;
-
-                              if (player.isFavorite) {
-                                player.followers += 1;
-                              } else {
-                                player.followers -= 1;
-                              }
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              return PlayerCard(
+                player: player,
+                onCardTap: _handleCardTap,
+                onFavoriteToggle: _handleFavoriteToggle,
+                cardColor: _getLeagueColor(player.league),
               );
             },
           );

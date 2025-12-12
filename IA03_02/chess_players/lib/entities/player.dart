@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 class Player {
   final String avatar;
   final int playerId;
@@ -63,25 +60,5 @@ class Player {
       league: json['league'] ?? '',
       streamingPlatforms: platforms,
     );
-  }
-}
-
-class PlayersApiService {
-  static Future<List<Player>> getPlayer(List<String> playersUsername) async {
-    final List<Player> list = [];
-
-    for (var username in playersUsername) {
-      final response = await http.get(
-        Uri.parse("https://api.chess.com/pub/player/$username"),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        list.add(Player.fromJson(data));
-      } else {
-        throw Exception('HTTP Failed: ${response.statusCode}');
-      }
-    }
-    return list;
   }
 }
