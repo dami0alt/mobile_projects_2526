@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:movies/api/api.dart';
 
 import 'package:movies/controllers/people_controller.dart';
+import 'package:movies/screens/movies_details_screen.dart';
 import 'package:movies/models/person.dart';
 
 class DetailsScreenPerson extends StatelessWidget {
@@ -98,7 +99,7 @@ class DetailsScreenPerson extends StatelessWidget {
                 _buildInfoBar(p),
                 Material(
                   color: Colors.transparent,
-                  child: _buildTabs(p),
+                  child: _buildTabs(p, peopleController),
                 ),
               ],
             ),
@@ -127,7 +128,7 @@ class DetailsScreenPerson extends StatelessWidget {
     );
   }
 
-  Widget _buildTabs(Person p) {
+  Widget _buildTabs(Person p, PeopleController pc) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: DefaultTabController(
@@ -138,7 +139,7 @@ class DetailsScreenPerson extends StatelessWidget {
               indicatorColor: Color(0xFF3A3F47),
               tabs: [
                 Tab(text: 'About Actor'),
-                Tab(text: 'Movies/Series Participation'),
+                Tab(text: 'Movies Participation'),
               ],
             ),
             SizedBox(
@@ -148,13 +149,57 @@ class DetailsScreenPerson extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 40),
                     child: Text(
-                      p.biography ?? "Cargando biografía...",
+                      p.biography ?? "Loading biography...",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w300),
                     ),
                   ),
-                  const Center(child: Text("Sección de Reseñas")),
+                  Obx(() {
+                    // Si todavía está cargando las películas
+                    if (pc.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    // Si no tiene películas registradas
+                    if (pc.personMovies.isEmpty) {
+                      return const Center(child: Text("No movies found"));
+                    }
+
+                    return GridView.builder(
+                      padding: const EdgeInsets.only(top: 20),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio: 0.65,
+                      ),
+                      itemCount: pc.personMovies.length,
+                      itemBuilder: (context, index) {
+                        final movie = pc.personMovies[index];
+                        return GestureDetector(
+                          onTap: () {
+                            // Navegación al detalle de la película
+
+                            Get.to(() => MoviesDetailsScreen(movie: movie));
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: const Color(0xFF3A3F47),
+                                child: const Icon(Icons.movie,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }),
                 ],
               ),
             ),

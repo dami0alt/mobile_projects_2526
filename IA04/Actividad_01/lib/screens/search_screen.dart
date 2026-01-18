@@ -6,7 +6,7 @@ import 'package:movies/api/api.dart';
 import 'package:movies/controllers/bottom_navigator_controller.dart';
 import 'package:movies/controllers/search_controller.dart';
 import 'package:movies/models/movie.dart';
-import 'package:movies/screens/details_screen.dart';
+import 'package:movies/screens/movies_details_screen.dart';
 import 'package:movies/widgets/infos.dart';
 import 'package:movies/widgets/search_box.dart';
 
@@ -116,8 +116,9 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         )
                       : ListView.separated(
-                          itemCount:
-                              Get.find<SearchController1>().foundedMovies.length,
+                          itemCount: Get.find<SearchController1>()
+                              .foundedMovies
+                              .length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           separatorBuilder: (_, __) =>
@@ -126,7 +127,8 @@ class _SearchScreenState extends State<SearchScreen> {
                             Movie movie = Get.find<SearchController1>()
                                 .foundedMovies[index];
                             return GestureDetector(
-                              onTap: () => Get.to(DetailsScreen(movie: movie)),
+                              onTap: () =>
+                                  Get.to(MoviesDetailsScreen(movie: movie)),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

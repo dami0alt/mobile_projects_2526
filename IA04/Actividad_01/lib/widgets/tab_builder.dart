@@ -2,7 +2,7 @@ import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies/models/movie.dart';
-import 'package:movies/screens/details_screen.dart';
+import 'package:movies/screens/movies_details_screen.dart';
 
 class TabBuilder extends StatelessWidget {
   const TabBuilder({
@@ -30,7 +30,7 @@ class TabBuilder extends StatelessWidget {
               itemCount: 6,
               itemBuilder: (context, index) => GestureDetector(
                 onTap: () {
-                  Get.to(DetailsScreen(movie: snapshot.data![index]));
+                  Get.to(MoviesDetailsScreen(movie: snapshot.data![index]));
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
