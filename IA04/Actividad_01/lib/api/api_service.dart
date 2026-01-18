@@ -140,4 +140,21 @@ class ApiService {
       return null;
     }
   }
+
+  static Future<List<Movie>?> getPersonMovieCredits(int personId) async {
+    List<Movie> movies = [];
+    try {
+      http.Response response = await http.get(Uri.parse(
+          '${Api.baseUrl}person/$personId/movie_credits?api_key=${Api.apiKey}&language=en-US'));
+      var res = jsonDecode(response.body);
+
+      // El endpoint devuelve una lista llamada 'cast'
+      res['cast'].forEach((m) {
+        movies.add(Movie.fromMap(m));
+      });
+      return movies;
+    } catch (e) {
+      return null;
+    }
+  }
 }

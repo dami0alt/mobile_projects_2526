@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:movies/api/api.dart';
 import 'package:movies/controllers/bottom_navigator_controller.dart';
 import 'package:movies/controllers/movies_controller.dart';
-import 'package:movies/screens/details_screen.dart';
+import 'package:movies/screens/movies_details_screen.dart';
 import 'package:movies/widgets/infos.dart';
 
 class WatchList extends StatelessWidget {
@@ -51,7 +51,8 @@ class WatchList extends StatelessWidget {
                         (movie) => Column(
                           children: [
                             GestureDetector(
-                              onTap: () => Get.to(DetailsScreen(movie: movie)),
+                              onTap: () =>
+                                  Get.to(MoviesDetailsScreen(movie: movie)),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

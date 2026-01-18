@@ -10,12 +10,13 @@ import 'package:movies/models/movie.dart';
 import 'package:movies/models/review.dart';
 import 'package:movies/utils/utils.dart';
 
-class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({
+class MoviesDetailsScreen extends StatelessWidget {
+  const MoviesDetailsScreen({
     super.key,
     required this.movie,
   });
   final Movie movie;
+
   @override
   Widget build(BuildContext context) {
     ApiService.getMovieReviews(movie.id);
@@ -51,7 +52,6 @@ class DetailsScreen extends StatelessWidget {
                       child: IconButton(
                         onPressed: () {
                           Get.find<MoviesController>().addToWatchList(movie);
-                        
                         },
                         icon: Obx(
                           () =>
@@ -232,7 +232,7 @@ class DetailsScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const TabBar(
-                          indicatorWeight: 4,
+                          indicatorWeight: 2,
                           indicatorSize: TabBarIndicatorSize.label,
                           indicatorColor: Color(
                             0xFF3A3F47,
@@ -240,7 +240,6 @@ class DetailsScreen extends StatelessWidget {
                           tabs: [
                             Tab(text: 'About Movie'),
                             Tab(text: 'Reviews'),
-                            Tab(text: 'Cast'),
                           ]),
                       SizedBox(
                         height: 400,
@@ -318,13 +317,15 @@ class DetailsScreen extends StatelessWidget {
                                                   ),
                                                   SizedBox(
                                                     width: 245,
-                                                    child: Text(snapshot
-                                                        .data![index].comment,
-                                                        style: const TextStyle(
-                                                          fontSize: 8,
-                                                          fontWeight:
+                                                    child: Text(
+                                                      snapshot
+                                                          .data![index].comment,
+                                                      style: const TextStyle(
+                                                        fontSize: 8,
+                                                        fontWeight:
                                                             FontWeight.w400,
-                                                    ),),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -339,7 +340,6 @@ class DetailsScreen extends StatelessWidget {
                               }
                             },
                           ),
-                          Container(),
                         ]),
                       ),
                     ],

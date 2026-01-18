@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies/api/api_service.dart';
 import 'package:movies/models/person.dart';
+import 'package:movies/models/movie.dart';
+import 'package:movies/models/movie.dart';
 
 //Controller for state management by the actors (People)
 //Use Getx to drive reactivity on people list and actors details
@@ -9,6 +11,8 @@ class PeopleController extends GetxController {
   var isLoading = false.obs;
   var mainTopRatedPeople = <Person>[].obs;
   var favoriteListPeople = <Person>[].obs;
+
+  var personMovies = <Movie>[].obs;
 
   var selectedPerson =
       Person(id: 0, name: '', profilePath: '', popularity: 0).obs;
@@ -44,16 +48,33 @@ class PeopleController extends GetxController {
     }
   }
 
+  // Actualiza tu método loadPersonDetails
   Future<void> loadPersonDetails(Person person) async {
     isLoading.value = true;
-    // Save basic data that we have to avoid overloading the screen with anything
     selectedPerson.value = person;
-    //Call the API to complete the data
-    var fullData = await ApiService.getInfoPerson(person.id);
+    personMovies.clear(); // Limpiamos películas del actor anterior
 
-    if (fullData != null) {
-      selectedPerson.value = fullData;
-    }
+    // Llamada en paralelo para mejores tiempos de carga
+    var results = await Future.wait([
+      ApiService.getInfoPerson(person.id),
+      ApiService.getPersonMovieCredits(person.id),
+    ]);
+
+    if (results[0] != null) selectedPerson.value = results[0] as Person;
+    if (results[1] != null) personMovies.value = results[1] as List<Movie>;
+
     isLoading.value = false;
   }
+  // Future<void> loadPersonDetails(Person person) async {
+  //   isLoading.value = true;
+  //   // Save basic data that we have to avoid overloading the screen with anything
+  //   selectedPerson.value = person;
+  //   //Call the API to complete the data
+  //   var fullData = await ApiService.getInfoPerson(person.id);
+
+  //   if (fullData != null) {
+  //     selectedPerson.value = fullData;
+  //   }
+  //   isLoading.value = false;
+  // }
 }

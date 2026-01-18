@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:movies/api/api.dart';
 import 'package:movies/api/api_service.dart';
 import 'package:movies/controllers/bottom_navigator_controller.dart';
+import 'package:movies/controllers/movies_controller.dart';
 import 'package:movies/controllers/people_controller.dart';
 import 'package:movies/controllers/people_search_controller.dart';
 import 'package:movies/widgets/search_box.dart';
@@ -15,6 +16,7 @@ class HomeScreen extends StatelessWidget {
   final PeopleController pcontroller = Get.put(PeopleController());
   final PeopleSearchController searchController =
       Get.put(PeopleSearchController());
+  final MoviesController mcontroller = Get.put(MoviesController());
 
   @override
   Widget build(BuildContext context) {

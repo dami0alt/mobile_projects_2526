@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movies/api/api.dart';
 import 'package:movies/models/movie.dart';
-import 'package:movies/screens/details_screen.dart';
+import 'package:movies/screens/movies_details_screen.dart';
 import 'package:movies/widgets/index_number.dart';
 
 class TopRatedItem extends StatelessWidget {
@@ -21,7 +21,7 @@ class TopRatedItem extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () => Get.to(
-            DetailsScreen(movie: movie),
+            MoviesDetailsScreen(movie: movie),
           ),
           child: Container(
             margin: const EdgeInsets.only(left: 12),
