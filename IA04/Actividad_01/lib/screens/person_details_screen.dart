@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:movies/api/api.dart';
+import 'package:movies/controllers/movies_controller.dart';
 
 import 'package:movies/controllers/people_controller.dart';
 import 'package:movies/screens/movies_details_screen.dart';
@@ -156,12 +157,12 @@ class DetailsScreenPerson extends StatelessWidget {
                     ),
                   ),
                   Obx(() {
-                    // Si todavía está cargando las películas
+                    // If still overloading movies list
                     if (pc.isLoading.value) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    // Si no tiene películas registradas
+                    // if dosen't hace any movie
                     if (pc.personMovies.isEmpty) {
                       return const Center(child: Text("No movies found"));
                     }
@@ -180,8 +181,8 @@ class DetailsScreenPerson extends StatelessWidget {
                         final movie = pc.personMovies[index];
                         return GestureDetector(
                           onTap: () {
-                            // Navegación al detalle de la película
-
+                            final mController = Get.put(MoviesController());
+                            mController.loadMovieDetails(movie);
                             Get.to(() => MoviesDetailsScreen(movie: movie));
                           },
                           child: ClipRRect(

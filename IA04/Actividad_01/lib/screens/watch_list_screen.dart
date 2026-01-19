@@ -7,8 +7,8 @@ import 'package:movies/controllers/movies_controller.dart';
 import 'package:movies/screens/movies_details_screen.dart';
 import 'package:movies/widgets/infos.dart';
 
-class WatchList extends StatelessWidget {
-  const WatchList({super.key});
+class MoviesWatchList extends StatelessWidget {
+  const MoviesWatchList({super.key});
 
   @override
   Widget build(BuildContext context) {
