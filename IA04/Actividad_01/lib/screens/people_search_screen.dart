@@ -65,7 +65,6 @@ class _SearchScreenState extends State<PeopleSearchScreen> {
               onSumbit: () {
                 String search =
                     Get.find<PeopleSearchController>().searchController.text;
-                Get.find<PeopleSearchController>().searchController.text = '';
                 Get.find<PeopleSearchController>().search(search);
                 FocusManager.instance.primaryFocus?.unfocus();
               },

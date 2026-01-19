@@ -89,7 +89,8 @@ class ApiService {
     List<Movie> movies = [];
     try {
       http.Response response = await http.get(Uri.parse(
-          'https://api.themoviedb.org/3/search/movie?api_key=YourApiKey&language=en-US&query=$query&page=1&include_adult=false'));
+          'https://api.themoviedb.org/3/search/movie?api_key=${Api.apiKey}&language=en-US&query=$query&page=1&include_adult=false'));
+      print(response.request?.url);
       var res = jsonDecode(response.body);
       res['results'].forEach(
         (m) => movies.add(
@@ -148,7 +149,7 @@ class ApiService {
           '${Api.baseUrl}person/$personId/movie_credits?api_key=${Api.apiKey}&language=en-US'));
       var res = jsonDecode(response.body);
 
-      // El endpoint devuelve una lista llamada 'cast'
+      // Endpoint returns a list called 'cast'
       res['cast'].forEach((m) {
         movies.add(Movie.fromMap(m));
       });

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:movies/api/api_service.dart';
 import 'package:movies/models/person.dart';
 import 'package:movies/models/movie.dart';
-import 'package:movies/models/movie.dart';
 
 //Controller for state management by the actors (People)
 //Use Getx to drive reactivity on people list and actors details
@@ -48,13 +47,13 @@ class PeopleController extends GetxController {
     }
   }
 
-  // Actualiza tu método loadPersonDetails
+  // loadPersonDetails Updated
   Future<void> loadPersonDetails(Person person) async {
     isLoading.value = true;
     selectedPerson.value = person;
-    personMovies.clear(); // Limpiamos películas del actor anterior
+    personMovies.clear(); // Clear Actor's movies before
 
-    // Llamada en paralelo para mejores tiempos de carga
+    // Parallel call to improve performance
     var results = await Future.wait([
       ApiService.getInfoPerson(person.id),
       ApiService.getPersonMovieCredits(person.id),
@@ -65,16 +64,4 @@ class PeopleController extends GetxController {
 
     isLoading.value = false;
   }
-  // Future<void> loadPersonDetails(Person person) async {
-  //   isLoading.value = true;
-  //   // Save basic data that we have to avoid overloading the screen with anything
-  //   selectedPerson.value = person;
-  //   //Call the API to complete the data
-  //   var fullData = await ApiService.getInfoPerson(person.id);
-
-  //   if (fullData != null) {
-  //     selectedPerson.value = fullData;
-  //   }
-  //   isLoading.value = false;
-  // }
 }
