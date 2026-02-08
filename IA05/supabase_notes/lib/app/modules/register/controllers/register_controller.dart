@@ -5,7 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class RegisterController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isHidden = true.obs;
-  TextEditingController nameC = TextEditingController();
+  TextEditingController fnameC = TextEditingController();
+  TextEditingController lnameC = TextEditingController();
   TextEditingController emailC = TextEditingController();
   TextEditingController passwordC = TextEditingController();
 
@@ -14,7 +15,8 @@ class RegisterController extends GetxController {
   Future<void> signUp() async {
     if (emailC.text.isNotEmpty &&
         passwordC.text.isNotEmpty &&
-        nameC.text.isNotEmpty) {
+        fnameC.text.isNotEmpty &&
+        lnameC.text.isNotEmpty) {
       isLoading.value = true;
       try {
         AuthResponse res = await client.auth
@@ -22,9 +24,11 @@ class RegisterController extends GetxController {
         isLoading.value = false;
 
         // insert registered user to table users
-        await client.from("users").insert({
-          "name": nameC.text,
+        await client.from("listeners").insert({
+          "lname": lnameC.text,
+          "fname": fnameC.text,
           "email": emailC.text,
+          "photo_url": "",
           "created_at": DateTime.now().toIso8601String(),
           "uid": res.user!.id,
         });

@@ -2,7 +2,7 @@ import 'package:supabase_notes/app/data/models/albums_model.dart';
 
 class Favorite {
   String idAlbum;
-  String idListener;
+  int idListener;
   String? savedAt;
   Album? album;
 

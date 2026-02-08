@@ -5,7 +5,7 @@ import '../models/favorites_model.dart';
 class MusicRepository {
   final SupabaseClient _client = Supabase.instance.client;
 
-  Future<String> getCurrentListenerId() async {
+  Future<int> getCurrentListenerId() async {
     final user = _client.auth.currentUser;
 
     if (user == null) throw Exception("no users logged-in");
@@ -13,38 +13,59 @@ class MusicRepository {
       final response = await _client
           .from('listeners')
           .select('id')
-          .eq('uid', user.id!)
+          .eq('email', user.email!)
           .single();
-      return response['id'].toString();
+      return response['id'] as int;
     } catch (e) {
-      throw Exception("Colud not found any result: $e");
+      throw Exception("Colud not find any result: $e");
     }
   }
 
   Future<List<Album>> getAllAlbums() async {
-    List<Album> albums = [];
-    final res = await _client.from("albums").select("*");
-
-    if (res.isEmpty) {
-      throw Exception("No response from request server");
+    try {
+      final res = await _client.from("albums").select("*");
+      if (res.isEmpty) return [];
+      return Album.fromJsonList(res as List);
+    } catch (e) {
+      print("Error fetching albums: $e");
+      return [];
     }
-    albums = Album.fromJsonList((res as List));
-    return albums;
   }
 
-  Future<List<Favorite>> getFavorites(String listenerId) async {
-    List<Favorite> favorites = [];
+  Future<List<Favorite>> getFavorites(int listenerId) async {
     try {
       final response = await _client
           .from('favorites')
           .select('*, albums(*)')
           .eq('listener_id', listenerId);
 
-      favorites = Favorite.fromJsonList(response as List);
-      return favorites;
+      return Favorite.fromJsonList(response as List);
     } catch (e) {
-      print("Error en repo: $e");
+      print("Error en repo favorites: $e");
       return [];
+    }
+  }
+
+  Future<void> addFavorite(int listenerId, String albumId) async {
+    try {
+      await _client.from('favorites').insert({
+        'listener_id': listenerId,
+        'album_id': albumId,
+        'saved_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      throw Exception("Error añadiendo favorito: $e");
+    }
+  }
+
+  Future<void> removeFavorite(int listenerId, String albumId) async {
+    try {
+      await _client.from('favorites').delete().match({
+        'listener_id': listenerId,
+        'album_id': albumId,
+      });
+    } catch (e) {
+      throw Exception("Error eliminando favorito: $e");
     }
   }
 }

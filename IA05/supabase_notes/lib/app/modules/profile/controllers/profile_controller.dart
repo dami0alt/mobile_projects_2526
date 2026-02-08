@@ -5,13 +5,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
   RxBool isLoading = false.obs;
-  RxBool isHidden = true.obs;
-  TextEditingController nameC = TextEditingController();
-  TextEditingController nameC2 = TextEditingController();
+
+  TextEditingController firstNameC = TextEditingController();
+  TextEditingController lastNameC = TextEditingController();
   TextEditingController emailC = TextEditingController();
   TextEditingController passwordC = TextEditingController();
-
+  RxnString photoUrl = RxnString();
   SupabaseClient client = Supabase.instance.client;
+
+  @override
+  void onInit() {
+    super.onInit();
+    getProfile();
+  }
 
   Future<void> logout() async {
     await client.auth.signOut();
@@ -19,49 +25,67 @@ class ProfileController extends GetxController {
   }
 
   Future<void> getProfile() async {
-    List<dynamic> res = await client
-        .from("users")
-        .select()
-        .match({"uid": client.auth.currentUser!.id});
-    Map<String, dynamic> user = (res).first as Map<String, dynamic>;
-    nameC.text = user["name"];
-    nameC2.text = user["name"];
-    emailC.text = user["email"];
+    isLoading.value = true;
+    try {
+      final Map<String, dynamic> user = await client
+          .from("listeners")
+          .select()
+          .eq("email", client.auth.currentUser!.email ?? "")
+          .single();
+
+      firstNameC.text = user["fname"] ?? "";
+      lastNameC.text = user["lname"] ?? "";
+      emailC.text = user["email"] ?? "";
+
+      // 👇 NUEVO: Guardamos la URL de la foto
+      photoUrl.value = user["photo_url"];
+    } catch (e) {
+      Get.snackbar("Error", "No se pudo cargar el perfil: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> updateProfile() async {
-    if (nameC2.text.isNotEmpty) {
+    if (firstNameC.text.isNotEmpty && lastNameC.text.isNotEmpty) {
       isLoading.value = true;
-      await client.from("users").update({
-        "name": nameC2.text,
-      }).match({"uid": client.auth.currentUser!.id});
-      // if user want to update password
-      if (passwordC.text.isNotEmpty) {
-        if (passwordC.text.length >= 6) {
-          try {
+      try {
+        await client.from("listeners").update({
+          "fname": firstNameC.text,
+          "lname": lastNameC.text,
+        }).eq("email", client.auth.currentUser!.email ?? "");
+
+        if (passwordC.text.isNotEmpty) {
+          if (passwordC.text.length >= 6) {
             await client.auth.updateUser(UserAttributes(
               password: passwordC.text,
             ));
-          } catch (e) {
-            Get.snackbar("ERROR", e.toString());
+          } else {
+            Get.snackbar(
+                "ERROR", "La contraseña debe tener al menos 6 caracteres");
+            isLoading.value = false;
+            return;
           }
-        } else {
-          Get.snackbar("ERROR", "Password must be longer than 6 characters");
         }
+
+        Get.defaultDialog(
+            barrierDismissible: false,
+            title: "Perfil Actualizado",
+            middleText: "Tus datos se han guardado correctamente.",
+            actions: [
+              OutlinedButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Text("OK"))
+            ]);
+      } catch (e) {
+        Get.snackbar("ERROR", "Falló la actualización: $e");
+      } finally {
+        isLoading.value = false;
       }
-      Get.defaultDialog(
-          barrierDismissible: false,
-          title: "Update Profile success",
-          middleText: "Name or Password will be updated",
-          actions: [
-            OutlinedButton(
-                onPressed: () {
-                  Get.back(); //close dialog
-                  Get.back(); //back to login page
-                },
-                child: const Text("OK"))
-          ]);
-      isLoading.value = false;
+    } else {
+      Get.snackbar("Atención", "Nombre y Apellido son obligatorios");
     }
   }
 }

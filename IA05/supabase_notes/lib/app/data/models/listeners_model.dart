@@ -1,6 +1,6 @@
 class Listener {
-  String id;
-  String userId;
+  int id;
+  int userId;
   String firstName;
   String lastName;
   String email;

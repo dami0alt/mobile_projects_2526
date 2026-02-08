@@ -11,6 +11,7 @@ class HomeController extends GetxController {
   final RxList<Album> allAlbums = List<Album>.empty().obs;
   final RxList<Favorite> userFavorites = List<Favorite>.empty().obs;
   final RxBool isLoading = true.obs;
+  int? _cachedListenerId;
 
   @override
   void onInit() {
@@ -21,17 +22,21 @@ class HomeController extends GetxController {
   Future<void> loadHomeData() async {
     isLoading.value = true;
     try {
-      final String currentListenerId = await _musicRepo.getCurrentListenerId();
-
-      // 2. El controlador solo PEDIENTE datos
       final albumsData = await _musicRepo.getAllAlbums();
-      final favsData = await _musicRepo.getFavorites(currentListenerId);
-
-      // 3. Actualizamos estado
       allAlbums.assignAll(albumsData);
-      userFavorites.assignAll(favsData);
     } catch (e) {
-      print("Error loading home: $e");
+      print("Error cargando álbumes: $e");
+    }
+
+    try {
+      _cachedListenerId = await _musicRepo.getCurrentListenerId();
+
+      if (_cachedListenerId != null) {
+        final favs = await _musicRepo.getFavorites(_cachedListenerId!);
+        userFavorites.assignAll(favs);
+      }
+    } catch (e) {
+      print("Aviso: No se pudo cargar la info del listener ($e)");
     } finally {
       isLoading.value = false;
     }
@@ -42,6 +47,37 @@ class HomeController extends GetxController {
   }
 
   Future<void> toggleFavorite(String albumId) async {
-    print("Toggle favorite para album: $albumId");
+    if (_cachedListenerId == null) return;
+    final bool isCurrentlyFav = isFavorite(albumId);
+
+    if (isCurrentlyFav) {
+      userFavorites.removeWhere((fav) => fav.idAlbum == albumId);
+
+      try {
+        await _musicRepo.removeFavorite(_cachedListenerId!, albumId);
+      } catch (e) {
+        print("Error al borrar, revirtiendo cambios UI: $e");
+        await loadHomeData();
+      }
+    } else {
+      final albumToAdd = allAlbums.firstWhereOrNull((a) => a.id == albumId);
+
+      if (albumToAdd != null) {
+        // Creamos un objeto Favorite temporal
+        final newFav = Favorite(
+            idAlbum: albumId,
+            idListener: _cachedListenerId!,
+            savedAt: DateTime.now().toString(),
+            album: albumToAdd);
+        userFavorites.add(newFav);
+        try {
+          await _musicRepo.addFavorite(_cachedListenerId!, albumId);
+        } catch (e) {
+          userFavorites.remove(newFav);
+          print("Error al guardar, revirtiendo: $e");
+        }
+      }
+    }
+    userFavorites.refresh();
   }
 }

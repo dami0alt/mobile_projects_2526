@@ -21,7 +21,19 @@ class RegisterView extends GetView<RegisterController> {
             ),
             TextField(
               autocorrect: false,
-              controller: controller.nameC,
+              controller: controller.fnameC,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                labelText: "Name",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            TextField(
+              autocorrect: false,
+              controller: controller.lnameC,
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 labelText: "Name",
