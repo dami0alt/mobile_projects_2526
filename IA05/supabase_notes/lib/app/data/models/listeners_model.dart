@@ -1,5 +1,6 @@
 class Listener {
   String id;
+  String userId;
   String firstName;
   String lastName;
   String email;
@@ -8,6 +9,7 @@ class Listener {
 
   Listener(
       {required this.id,
+      required this.userId,
       required this.firstName,
       required this.lastName,
       required this.email,
@@ -16,6 +18,7 @@ class Listener {
 
   Listener.fromJson(Map<String, dynamic> json)
       : id = json['id'] ?? "",
+        userId = json['uid'] ?? "",
         firstName = json['fname'] ?? "Unknown",
         lastName = json['lname'] ?? "Unknown",
         email = json['email'] ?? "",
@@ -25,6 +28,7 @@ class Listener {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'uid': userId,
       'fname': firstName,
       'lname': lastName,
       'email': email,
