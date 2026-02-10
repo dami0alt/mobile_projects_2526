@@ -14,7 +14,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mi Perfil'),
+        title: const Text('My Profile'),
         centerTitle: true,
         actions: [
           TextButton(
@@ -80,7 +80,7 @@ class ProfileView extends GetView<ProfileController> {
                   controller.firstNameC, // Conectado al controlador nuevo
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
-                labelText: "Nombre",
+                labelText: "First Name",
                 prefixIcon: Icon(Icons.person_outline),
                 border: OutlineInputBorder(),
               ),
@@ -94,7 +94,7 @@ class ProfileView extends GetView<ProfileController> {
                   controller.lastNameC, // Conectado al controlador nuevo
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
-                labelText: "Apellido",
+                labelText: "Last Name",
                 prefixIcon: Icon(Icons.person_outline),
                 border: OutlineInputBorder(),
               ),
@@ -108,10 +108,11 @@ class ProfileView extends GetView<ProfileController> {
               textInputAction: TextInputAction.done,
               obscureText: true, // Ocultar contraseña
               decoration: const InputDecoration(
-                labelText: "Nueva contraseña (Opcional)",
+                labelText: "New Password (Optional)",
                 prefixIcon: Icon(Icons.lock_outline),
                 border: OutlineInputBorder(),
-                helperText: "Déjalo vacío si no quieres cambiarla",
+                helperText:
+                    "You shouldn't fill in this field if you don't want to.",
               ),
             ),
             const SizedBox(height: 40),
@@ -128,7 +129,7 @@ class ProfileView extends GetView<ProfileController> {
                     // Nota: El controlador maneja el logout si se cambió la contraseña
                   }
                 },
-                child: const Text("ACTUALIZAR PERFIL"),
+                child: const Text("UPDATE PROFILE"),
               ),
             ),
           ],

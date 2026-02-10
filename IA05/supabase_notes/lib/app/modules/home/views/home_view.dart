@@ -34,7 +34,7 @@ class HomeView extends GetView<HomeController> {
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                "Descubre Álbumes",
+                "Discover Albums",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
@@ -45,7 +45,7 @@ class HomeView extends GetView<HomeController> {
             const Padding(
               padding: EdgeInsets.fromLTRB(16, 20, 16, 10),
               child: Text(
-                "Tus Favoritos",
+                "Your favorites",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
@@ -61,7 +61,7 @@ class HomeView extends GetView<HomeController> {
   // Widget del Carrusel (PageView)
   Widget _buildCarousel() {
     if (controller.allAlbums.isEmpty) {
-      return const Center(child: Text("No hay álbumes disponibles"));
+      return const Center(child: Text("There are not albumes avaible"));
     }
 
     return SizedBox(
@@ -79,30 +79,88 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildFavoritesList() {
+    // Protección contra lista vacía
     if (controller.userFavorites.isEmpty) {
-      return const Center(child: Text("Aún no tienes favoritos"));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.favorite_border, size: 60, color: Colors.grey[800]),
+            const SizedBox(height: 10),
+            const Text("Your collection is empty",
+                style: TextStyle(color: Colors.grey)),
+          ],
+        ),
+      );
     }
 
     return ListView.builder(
+      physics: const BouncingScrollPhysics(), // Scroll suave tipo iOS/Spotify
+      padding: const EdgeInsets.symmetric(vertical: 10), // Un poco de aire
       itemCount: controller.userFavorites.length,
       itemBuilder: (context, index) {
         final Favorite fav = controller.userFavorites[index];
-        // Protección: Si el álbum vino nulo de la DB, no renderizamos error
+
+        // 1. Validación de seguridad
         if (fav.album == null) return const SizedBox.shrink();
 
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: fav.album!.photoUrl != null
-                ? NetworkImage(fav.album!.photoUrl!)
-                : null,
-            child: fav.album!.photoUrl == null
-                ? const Icon(Icons.music_note)
-                : null,
-          ),
-          title: Text(fav.album!.title),
-          subtitle: Text(fav.album!.artist),
-          trailing: const Icon(Icons.favorite, color: Colors.red),
-        );
+        final album =
+            fav.album!; // Creamos el alias 'album' para escribir menos
+
+        // 2. Usamos Obx AQUÍ para que cada fila sea inteligente
+        return Obx(() {
+          // Calculamos el estado real
+          final isFav = controller.isFavorite(album.id);
+
+          return ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: Container(
+              width: 55,
+              height: 55,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4), // Borde sutil
+                image: album.photoUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(album.photoUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+                color: Colors.grey[800], // Placeholder color
+              ),
+              child: album.photoUrl == null
+                  ? const Icon(Icons.music_note, color: Colors.white)
+                  : null,
+            ),
+
+            // Títulos blancos y subtítulos grises (definidos en tu Theme, pero forzamos por seguridad)
+            title: Text(
+              album.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w600, color: Colors.white),
+            ),
+            subtitle: Text(
+              album.artist,
+              style: TextStyle(color: Colors.grey[400], fontSize: 13),
+            ),
+
+            // 4. Botón de Acción
+            trailing: IconButton(
+              icon: Icon(
+                isFav ? Icons.favorite : Icons.favorite_border,
+                // Usamos el VERDE de tu tema (primaryColor) o Rojo si prefieres
+                color: isFav ? const Color(0xFF1DB954) : Colors.white,
+                size: 26,
+              ),
+              onPressed: () {
+                // Ahora sí usamos la variable 'album' correcta
+                controller.toggleFavorite(album.id);
+              },
+            ),
+          );
+        });
       },
     );
   }
@@ -167,7 +225,7 @@ class _AlbumCard extends StatelessWidget {
               child: IconButton(
                 icon: Icon(
                   isFav ? Icons.favorite : Icons.favorite_border,
-                  color: isFav ? Colors.red : Colors.white,
+                  color: isFav ? Color(0xFF1DB954) : Colors.white,
                   size: 30,
                 ),
                 onPressed: () {

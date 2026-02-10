@@ -7,6 +7,7 @@ import 'package:supabase_notes/app/controllers/auth_controller.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/routes/app_pages.dart';
+import 'app/core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,10 +24,9 @@ void main() async {
   final authC = Get.put(AuthController(), permanent: true);
   runApp(
     GetMaterialApp(
-      title: "Application",
-      initialRoute: supaProvider.client.auth.currentUser == null
-          ? Routes.LOGIN
-          : Routes.HOME, //cek login current user
+      title: "Music Hub",
+      theme: AppTheme.darkTheme,
+      initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),

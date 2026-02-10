@@ -10,13 +10,15 @@ import 'package:supabase_notes/app/modules/profile/bindings/profile_binding.dart
 import 'package:supabase_notes/app/modules/profile/views/profile_view.dart';
 import 'package:supabase_notes/app/modules/register/bindings/register_binding.dart';
 import 'package:supabase_notes/app/modules/register/views/register_view.dart';
+import 'package:supabase_notes/app/modules/splash/bindings/splash_binding.dart';
+import 'package:supabase_notes/app/modules/splash/views/splash_view.dart';
 
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(
@@ -38,6 +40,11 @@ class AppPages {
       name: _Paths.PROFILE,
       page: () => ProfileView(),
       binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPLASH,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
     ),
   ];
 }
